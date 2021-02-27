@@ -20,10 +20,10 @@ We've found a few resources on tracking hands and fingers using opencv in python
 
 Successful completion: spent >1 hour and no luck (in this case talk to Steve during class), or a c++ file recognizes the imported opencv class.
 
-2. Create an inital header and cpp files and commit to github. - Kat
+##### 2. Create an inital header and cpp files and commit to github. - Kat
 
 Successful completion: files are on github.
 
-3. Watch youtube crash course on c++ - Sam
+##### 3. Watch youtube crash course on c++ - Sam
 
-SUccessful completion: basic understanding of c++.
+Successful completion: basic understanding of c++.
