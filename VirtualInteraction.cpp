@@ -3,20 +3,20 @@
 using namespace cv;
 int main(int argc, char** argv )
 {
-    if ( argc != 2 )
-    {
-        printf("usage: DisplayImage.out <Image_Path>\n");
-        return -1;
+    
+    //Get Camera feed in and display
+    VideoCapture cap;
+    // use default camera
+    if (!cap.open(0)) {
+        return 0;
     }
-    Mat image;
-    image = imread( argv[1], 1 );
-    if ( !image.data )
-    {
-        printf("No image data \n");
-        return -1;
+    for (;;) { //while loop
+        Mat frame;
+        cap >> frame;
+        if (frame.empty()) break; //end of video stream
+        imshow("video in", frame);
+        if (waitKey(10) == 27) break; //stop by ESC key
     }
-    namedWindow("Display Image", WINDOW_AUTOSIZE );
-    imshow("Display Image", image);
-    waitKey(0);
+
     return 0;
 }
