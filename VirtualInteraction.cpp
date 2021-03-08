@@ -12,7 +12,9 @@ int main(int argc, char** argv )
     VideoCapture cap;
     // use default camera
     if (!cap.open(0)) {
+        if(!cap.open(-1)) {
         return 0;
+        }
     }
 
     Point p1(0,0), p2(100,0);
