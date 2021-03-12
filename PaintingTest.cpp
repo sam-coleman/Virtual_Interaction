@@ -43,24 +43,26 @@ int main(int argc, char** argv ) {
 
     //CREATE RECTANGLES FOR COLOR OPTIONS
     //TODO: get Scalar value from color (replace Sclar(#,#,#)) with tuples defined above
-    rectangle(Window, Point(40,1), Point(140,65), Scalar(255,255,255), FILLED);
-    rectangle(Window, Point(160,1), Point(255,65), Scalar(255,0,0), FILLED);
-    rectangle(Window, Point(275,1), Point(370,65), Scalar(0,255,0), FILLED);
-    rectangle(Window, Point(390,1), Point(485,65), Scalar(0,0,255), FILLED);
-    rectangle(Window, Point(505,1), Point(600,65), Scalar(0,255,255), FILLED);
+    rectangle(Window, Point(40,1), Point(140,65), Scalar(255,255,255), -1);
+    rectangle(Window, Point(160,1), Point(255,65), Scalar(255,0,0), -1);
+    rectangle(Window, Point(275,1), Point(370,65), Scalar(0,255,0), -1);
+    rectangle(Window, Point(390,1), Point(485,65), Scalar(0,0,255), -1);
+    rectangle(Window, Point(505,1), Point(600,65), Scalar(0,255,255), -1);
     putText(Window, "CLEAR ALL", Point(49, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1, LINE_AA);
     putText(Window, "BLUE", Point(185, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1, LINE_AA);
     putText(Window, "GREEN", Point(298, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1, LINE_AA);
     putText(Window, "RED", Point(420, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1, LINE_AA);
     putText(Window, "YELLOW", Point(520, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(150,150,150), 1, LINE_AA);
-
+    double alpha = .5, gamma = 0;
+   
     for(;;) {
         cap >> video;
         flip(video, video, +1);
+        Mat combined;
+        addWeighted(Window, alpha, video, 1-alpha, gamma, combined);
 
         if (Window.empty()) break; //end of video stream
-        imshow("video in", video + Window);
-
+        imshow("video in", combined);
         if (waitKey(10) == 27) break; //stop by ESC key
     }
     return 0;
