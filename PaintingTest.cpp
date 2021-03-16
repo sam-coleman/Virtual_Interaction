@@ -11,6 +11,20 @@
 using namespace cv;
 using namespace std;
 
+int getMaxAreaContourId(vector <vector<Point>> contours) {
+        //Soure: https://stackoverflow.com/questions/46187563/finding-largest-contours-c
+        double maxArea = 0;
+        int maxAreaContourId = -1;
+        for (int j = 0; j < contours.size(); j++) {
+            double newArea = contourArea(contours.at(j));
+            if (newArea > maxArea) {
+                maxArea = newArea;
+                maxAreaContourId = j;
+            }
+        }
+    return maxAreaContourId;
+}
+
 int main(int argc, char** argv ) {
 
     VideoCapture cap;
@@ -58,6 +72,7 @@ int main(int argc, char** argv ) {
     Mat hsv;
     int x1 = 0, y1 = 0; //cordinates
     Rect boundBox;
+    int noiseThreshold = 400;
 
     for(;;) {
         cap >> video;
@@ -75,56 +90,38 @@ int main(int argc, char** argv ) {
         //         kernal[i][j] = 1;
         //     }
         // }
+        //BGR
         Mat mask;
         inRange(hsv, Scalar (161, 155, 84), Scalar (179, 255, 255), mask);
         erode(mask, mask, kernal); //iterations = 2);
+        erode(mask, mask, kernal);
         morphologyEx(mask, mask, MORPH_OPEN, kernal);
         dilate(mask, mask, kernal);
         vector <vector<Point> > contours;
         //vector<Vec4i> hierarchy;
         findContours(mask, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
         //TODO: DEAL WITH NOISE
-        if (contours.size() >= 1) {
-        //TODO: make into separate function 
-        //Soure: https://stackoverflow.com/questions/46187563/finding-largest-contours-c
-        double maxArea = 0;
-        int maxAreaContourId = -1;
-        for (int j = 0; j < contours.size(); j++) {
-            double newArea = contourArea(contours.at(j));
-            if (newArea > maxArea) {
-                maxArea = newArea;
-                maxAreaContourId = j;
-            }
-        }
-        vector<Point> c = contours.at(maxAreaContourId);
-        boundBox = boundingRect(c);
 
-         if (x1 == 0 && y1 == 0) {
-            x1, y1 = boundBox.x, boundBox.y;
-        }
-        else {
-            line(Window, Point(x1, y1), Point(boundBox.x, boundBox.y), Scalar(255, 0, 0), 4);
+        
+
+        if (contours.size() >= 1 && contourArea(contours.at(getMaxAreaContourId(contours))) > noiseThreshold) {
+            printf("contour area is %f\n", contourArea(contours.at(getMaxAreaContourId(contours))));
+            vector<Point> c = contours.at(getMaxAreaContourId(contours));
+            boundBox = boundingRect(c);
+
+            if (x1 == 0 && y1 == 0) {
+                x1, y1 = boundBox.x, boundBox.y;
+            }
+            else {
+                line(Window, Point(x1, y1), Point(boundBox.x, boundBox.y), Scalar(255, 0, 0), 4);
+            }
             x1 = boundBox.x;
             y1 = boundBox.y;
-        }
         } 
         else {
             x1 = 0;
             y1 = 0;
- 
         }
-        
-        // if (x1 == 0 && y1 == 0) {
-        //     x1, y1 = boundBox.x, boundBox.y;
-        // }
-        // else {
-        //     line(Window, Point(x1, y1), Point(boundBox.x, boundBox.y), Scalar(255, 0, 0), 4);
-        //     x1 = boundBox.x;
-        //     y1 = boundBox.y;
-        // }
-        //update points: new points become previous points
-
-
         //contourArea(max(cnts, key = contourArea)) > 800; //TODO: noise threshold
         //findContours(mask, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
         //cout << "size is " << cnts.size() << '\n';
@@ -134,10 +131,9 @@ int main(int argc, char** argv ) {
         //     vector <vector<Point>> cnt;
         //     sort(cnts, cnt); //TODO: THINK THIS IS WRONG
         // }
-
         if (Window.empty()) break; //end of video stream
         //imshow("video in", combined);
-        imshow("video in", video + Window);
+        imshow("video in",  video + Window);
         if (waitKey(10) == 27) break; //stop by ESC key
     }
     return 0;
