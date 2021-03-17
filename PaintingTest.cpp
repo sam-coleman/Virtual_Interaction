@@ -25,6 +25,15 @@ int getMaxAreaContourId(vector <vector<Point>> contours) {
     return maxAreaContourId;
 }
 
+Scalar getColorFromTuple (tuple<int, int, int> color) {
+    //take in tuple, return Scalar color
+    int blue, green, red;
+    blue = get<0>(color);
+    green = get<1>(color);
+    red = get<2>(color);
+    return Scalar(blue, green, red);
+}
+
 int main(int argc, char** argv ) {
 
     VideoCapture cap;
@@ -35,71 +44,85 @@ int main(int argc, char** argv ) {
     }
 
     //DEQUEUE FUNCTION
-    deque<int> bpoints;
-    bpoints.max_size();
-    deque<int> gpoints;
-    gpoints.max_size();
-    deque<int> rpoints;
-    rpoints.max_size();
-    deque<int> ypoints;
-    ypoints.max_size();
-    int bindex=0, gindex=0, rindex=0, yindex=0, colorIndex = 0; 
+    //isn't used right now
+    // deque<int> bpoints;
+    // bpoints.max_size();
+    // deque<int> gpoints;
+    // gpoints.max_size();
+    // deque<int> rpoints;
+    // rpoints.max_size();
+    // deque<int> ypoints;
+    // ypoints.max_size();
+    // int bindex=0, gindex=0, rindex=0, yindex=0, colorIndex = 0; 
+  
     //Colors are BGR
+    //order of colors in vector: blue, green, red, yellow
     tuple <int, int, int> blue;
-    tuple <int, int, int> green;
-    tuple <int, int, int> red;
-    tuple <int, int, int> yellow;
     blue = make_tuple(255, 0, 0);
-    //can we make an array of tuples??
+    tuple <int, int, int> green;
+    green = make_tuple(0, 255, 0);
+    tuple <int, int, int> red;
+    red = make_tuple(0, 0, 255);
+    tuple <int, int, int> yellow;
+    yellow = make_tuple(0, 255, 255);
+    vector <tuple<int, int, int>> colors;
+    colors.push_back(blue);
+    colors.push_back(green);
+    colors.push_back(red);
+    colors.push_back(yellow);
 
-    Mat canvas;
+    //currColor: 0=blue, 1=green, 2=red, 3=yellow
+    int currColor = 0;
+    Mat controls;
     Mat video;
+    Mat canvas;
     cap >> video;
-    if(canvas.empty()) canvas = cv::Mat::zeros(video.size(), video.type());
-
+    if(video.empty()) video = Mat::zeros(video.size(), video.type());
+    if(controls.empty()) controls = Mat::zeros(video.size(), video.type());
+    if(canvas.empty()) canvas = Mat::zeros(video.size(), video.type());
+    
     //CREATE RECTANGLES FOR COLOR OPTIONS
-    //TODO: get Scalar value from color (replace Sclar(#,#,#)) with tuples defined above
-    rectangle(canvas, Point(40,1), Point(140,65), Scalar(255,255,255), -1);
-    rectangle(canvas, Point(160,1), Point(255,65), Scalar(255,0,0), -1);
-    rectangle(canvas, Point(275,1), Point(370,65), Scalar(0,255,0), -1);
-    rectangle(canvas, Point(390,1), Point(485,65), Scalar(0,0,255), -1);
-    rectangle(canvas, Point(505,1), Point(600,65), Scalar(0,255,255), -1);
-    putText(canvas, "CLEAR ALL", Point(49, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1, LINE_AA);
-    putText(canvas, "BLUE", Point(185, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1, LINE_AA);
-    putText(canvas, "GREEN", Point(298, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1, LINE_AA);
-    putText(canvas, "RED", Point(420, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1, LINE_AA);
+    Rect clearControl(Point(40,1), Point(140,65));
+    Rect blueControl(Point(160,1), Point(255,65));
+    Rect greenControl( Point(275,1), Point(370,65));
+    Rect redControl(Point(390,1), Point(485,65));
+    Rect yellowControl(Point(505,1), Point(600,65));
+    Rect currColorIndicator(Point (581, 460), Point(600, 479));
+    //PLACE RECTANGLES ON CONTROL MAT
+    rectangle(controls, clearControl, Scalar(255,255,255), -1);
+    rectangle(controls, blueControl, Scalar(255,0,0), -1);
+    rectangle(controls, greenControl, Scalar(0,255,0), -1);
+    rectangle(controls, redControl, Scalar(0,0,255), -1);
+    rectangle(controls, yellowControl, Scalar(0,255,255), -1);
+    putText(controls, "CLEAR ALL", Point(49, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
+    putText(controls, "BLUE", Point(183, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1.5, LINE_AA);
+    putText(controls, "GREEN", Point(298, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1.5, LINE_AA);
+    putText(controls, "RED", Point(420, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1.5, LINE_AA);
+    putText(controls, "YELLOW", Point(520, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(150,150,150), 1.5, LINE_AA);
+
+    rectangle(controls, currColorIndicator, getColorFromTuple(colors[currColor]), -1);
+    cout << "video size is " << video.size() << '\n';
     Mat hsv;
     int x1 = 0, y1 = 0; //cordinates
     Rect boundBox; //bounding box for target
-    int noiseThreshold = 400;
+    int noiseThreshold = 500;
 
     for(;;) {
         cap >> video;
         flip(video, video, +1);
         cvtColor(video, hsv, COLOR_BGR2HSV);
+        rectangle(controls, currColorIndicator, getColorFromTuple(colors[currColor]), -1); //show current color in lower corner
 
         //MORPHING TECHNIQUES
         Mat kernal = Mat(5, 5, CV_8U, Scalar(1,1,1));
-        //InputArray kernal();
-        // for (int i = 0; i < 5; i++) {
-        //     for (int j = 0; j < 0; j++) {
-        //         kernal[i][j] = 1;
-        //     }
-        // }
-        //BGR
         Mat mask;
         inRange(hsv, Scalar(130, 126, 75), Scalar(179, 255, 255), mask);
-        //inRange(hsv, Scalar (161, 155, 84), Scalar (179, 255, 255), mask);
-        erode(mask, mask, kernal); //iterations = 2);
+        erode(mask, mask, kernal);
         erode(mask, mask, kernal);
         morphologyEx(mask, mask, MORPH_OPEN, kernal);
         dilate(mask, mask, kernal);
         vector <vector<Point> > contours;
-        //vector<Vec4i> hierarchy;
         findContours(mask, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-        //TODO: DEAL WITH NOISE
-
-        
 
         if (contours.size() >= 1 && contourArea(contours.at(getMaxAreaContourId(contours))) > noiseThreshold) {
             vector<Point> c = contours.at(getMaxAreaContourId(contours));
@@ -107,9 +130,23 @@ int main(int argc, char** argv ) {
 
             if (x1 == 0 && y1 == 0) {
                 x1, y1 = boundBox.x, boundBox.y;
+            }            
+            else if ((blueControl & boundBox).area()> 0) {
+                currColor = 0;
+            }
+            else if ((greenControl & boundBox).area()>0) {
+                currColor = 1;
+            }
+            else if ((redControl & boundBox).area()>0) {
+                currColor = 2;
+            }
+            else if ((yellowControl & boundBox).area()>0) {
+                currColor = 3;
             }
             else {
-                line(canvas, Point(x1, y1), Point(boundBox.x, boundBox.y), Scalar(255, 0, 0), 4);
+                    //line(canvas, Point(x1, y1), Point(boundBox.x, boundBox.y), Scalar(255, 0, 0), 4);
+                line(canvas, Point(x1, y1), Point(boundBox.x, boundBox.y), getColorFromTuple(colors[currColor]), 4);
+                //line(canvas, Point(x1, y1), Point(boundBox.x, boundBox.y), Scalar(255, 0, 0), 4);
             }
             x1 = boundBox.x;
             y1 = boundBox.y;
@@ -118,11 +155,10 @@ int main(int argc, char** argv ) {
             x1 = 0;
             y1 = 0;
         }
-
     
         if (canvas.empty()) break; //end of video stream
-        imshow("video in",  video);
-        imshow("canvas", canvas);
+        imshow("video in",  controls + video + canvas);
+        imshow("canvas", controls + canvas);
         if (waitKey(10) == 27) break; //stop by ESC key
     }
     return 0;
