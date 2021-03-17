@@ -52,35 +52,31 @@ int main(int argc, char** argv ) {
     blue = make_tuple(255, 0, 0);
     //can we make an array of tuples??
 
-    Mat Window;
+    Mat canvas;
     Mat video;
     cap >> video;
-    if(Window.empty()) Window = cv::Mat::zeros(video.size(), video.type());
+    if(canvas.empty()) canvas = cv::Mat::zeros(video.size(), video.type());
 
     //CREATE RECTANGLES FOR COLOR OPTIONS
     //TODO: get Scalar value from color (replace Sclar(#,#,#)) with tuples defined above
-    rectangle(Window, Point(40,1), Point(140,65), Scalar(255,255,255), -1);
-    rectangle(Window, Point(160,1), Point(255,65), Scalar(255,0,0), -1);
-    rectangle(Window, Point(275,1), Point(370,65), Scalar(0,255,0), -1);
-    rectangle(Window, Point(390,1), Point(485,65), Scalar(0,0,255), -1);
-    rectangle(Window, Point(505,1), Point(600,65), Scalar(0,255,255), -1);
-    putText(Window, "CLEAR ALL", Point(49, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1, LINE_AA);
-    putText(Window, "BLUE", Point(185, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1, LINE_AA);
-    putText(Window, "GREEN", Point(298, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1, LINE_AA);
-    putText(Window, "RED", Point(420, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1, LINE_AA);
-    double alpha = .5, gamma = 0;
+    rectangle(canvas, Point(40,1), Point(140,65), Scalar(255,255,255), -1);
+    rectangle(canvas, Point(160,1), Point(255,65), Scalar(255,0,0), -1);
+    rectangle(canvas, Point(275,1), Point(370,65), Scalar(0,255,0), -1);
+    rectangle(canvas, Point(390,1), Point(485,65), Scalar(0,0,255), -1);
+    rectangle(canvas, Point(505,1), Point(600,65), Scalar(0,255,255), -1);
+    putText(canvas, "CLEAR ALL", Point(49, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1, LINE_AA);
+    putText(canvas, "BLUE", Point(185, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1, LINE_AA);
+    putText(canvas, "GREEN", Point(298, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1, LINE_AA);
+    putText(canvas, "RED", Point(420, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1, LINE_AA);
     Mat hsv;
     int x1 = 0, y1 = 0; //cordinates
-    Rect boundBox;
+    Rect boundBox; //bounding box for target
     int noiseThreshold = 400;
 
     for(;;) {
         cap >> video;
         flip(video, video, +1);
         cvtColor(video, hsv, COLOR_BGR2HSV);
-        //cvtColor(video, video, COLOR_BGR2HSV);
-        //Mat combined;
-        //addWeighted(Window, alpha, video, 1-alpha, gamma, combined);
 
         //MORPHING TECHNIQUES
         Mat kernal = Mat(5, 5, CV_8U, Scalar(1,1,1));
@@ -92,7 +88,8 @@ int main(int argc, char** argv ) {
         // }
         //BGR
         Mat mask;
-        inRange(hsv, Scalar (161, 155, 84), Scalar (179, 255, 255), mask);
+        inRange(hsv, Scalar(130, 126, 75), Scalar(179, 255, 255), mask);
+        //inRange(hsv, Scalar (161, 155, 84), Scalar (179, 255, 255), mask);
         erode(mask, mask, kernal); //iterations = 2);
         erode(mask, mask, kernal);
         morphologyEx(mask, mask, MORPH_OPEN, kernal);
@@ -105,7 +102,6 @@ int main(int argc, char** argv ) {
         
 
         if (contours.size() >= 1 && contourArea(contours.at(getMaxAreaContourId(contours))) > noiseThreshold) {
-            printf("contour area is %f\n", contourArea(contours.at(getMaxAreaContourId(contours))));
             vector<Point> c = contours.at(getMaxAreaContourId(contours));
             boundBox = boundingRect(c);
 
@@ -113,7 +109,7 @@ int main(int argc, char** argv ) {
                 x1, y1 = boundBox.x, boundBox.y;
             }
             else {
-                line(Window, Point(x1, y1), Point(boundBox.x, boundBox.y), Scalar(255, 0, 0), 4);
+                line(canvas, Point(x1, y1), Point(boundBox.x, boundBox.y), Scalar(255, 0, 0), 4);
             }
             x1 = boundBox.x;
             y1 = boundBox.y;
@@ -122,18 +118,11 @@ int main(int argc, char** argv ) {
             x1 = 0;
             y1 = 0;
         }
-        //contourArea(max(cnts, key = contourArea)) > 800; //TODO: noise threshold
-        //findContours(mask, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-        //cout << "size is " << cnts.size() << '\n';
 
-        //CREATE BOUNDING CIRCLE
-        // if (cnts.size() > 0) {
-        //     vector <vector<Point>> cnt;
-        //     sort(cnts, cnt); //TODO: THINK THIS IS WRONG
-        // }
-        if (Window.empty()) break; //end of video stream
-        //imshow("video in", combined);
-        imshow("video in",  video + Window);
+    
+        if (canvas.empty()) break; //end of video stream
+        imshow("video in",  video);
+        imshow("canvas", canvas);
         if (waitKey(10) == 27) break; //stop by ESC key
     }
     return 0;
