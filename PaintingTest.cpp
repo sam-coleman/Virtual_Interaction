@@ -143,10 +143,11 @@ int main(int argc, char** argv ) {
             else if ((yellowControl & boundBox).area()>0) {
                 currColor = 3;
             }
+            else if ((clearControl & boundBox).area()>0) {
+                canvas = Scalar(0,0,0);
+            }
             else {
-                    //line(canvas, Point(x1, y1), Point(boundBox.x, boundBox.y), Scalar(255, 0, 0), 4);
                 line(canvas, Point(x1, y1), Point(boundBox.x, boundBox.y), getColorFromTuple(colors[currColor]), 4);
-                //line(canvas, Point(x1, y1), Point(boundBox.x, boundBox.y), Scalar(255, 0, 0), 4);
             }
             x1 = boundBox.x;
             y1 = boundBox.y;
