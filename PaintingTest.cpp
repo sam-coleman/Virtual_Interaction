@@ -34,6 +34,41 @@ Scalar getColorFromTuple (tuple<int, int, int> color) {
     return Scalar(blue, green, red);
 }
 
+void updateThickBoxes(Mat mat, Rect _2, Rect _4, Rect _6, Rect _8, Rect _10, int currThick) {
+    rectangle(mat, _2, Scalar(255,255,225), -1);
+    rectangle(mat, _4, Scalar(255,255,255), -1);
+    rectangle(mat, _6, Scalar(255,255,255), -1);
+    rectangle(mat, _8, Scalar(255,255,255), -1);
+    rectangle(mat, _10, Scalar(255,255,255), -1);
+    putText(mat, "2", Point(615, 97), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
+    putText(mat, "4", Point(615, 181), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
+    putText(mat, "6", Point(615, 265), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
+    putText(mat, "8", Point(615, 349), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
+    putText(mat, "10", Point(610, 433), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
+
+    if (currThick == 2){
+        rectangle(mat, _2, Scalar(0,255,0), -1);
+        putText(mat, "2", Point(615, 97), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
+    }
+    else if (currThick == 4){
+        rectangle(mat, _4, Scalar(0,255,0), -1);
+        putText(mat, "4", Point(615, 181), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
+    }
+    else if (currThick == 6) {
+        rectangle(mat, _6, Scalar(0,255,0), -1);
+        putText(mat, "6", Point(615, 265), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
+    }
+    else if (currThick == 8) {
+        rectangle(mat, _8, Scalar(0,255,0), -1);
+        putText(mat, "8", Point(615, 349), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
+    }
+    else if (currThick == 10) {
+        rectangle(mat, _10, Scalar(0,255,0), -1);
+        putText(mat, "10", Point(610, 433), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);          
+    }
+
+}
+
 int main(int argc, char** argv ) {
 
     VideoCapture cap;
@@ -72,11 +107,12 @@ int main(int argc, char** argv ) {
     colors.push_back(yellow);
 
     //currColor: 0=blue, 1=green, 2=red, 3=yellow
-    int currColor = 0;
+    int currColor = 0, currThick = 4;
     Mat controls;
     Mat video;
     Mat canvas;
     cap >> video;
+    //make all mats the same size
     if(video.empty()) video = Mat::zeros(video.size(), video.type());
     if(controls.empty()) controls = Mat::zeros(video.size(), video.type());
     if(canvas.empty()) canvas = Mat::zeros(video.size(), video.type());
@@ -87,8 +123,10 @@ int main(int argc, char** argv ) {
     Rect greenControl( Point(275,1), Point(370,65));
     Rect redControl(Point(390,1), Point(485,65));
     Rect yellowControl(Point(505,1), Point(600,65));
-    Rect currColorIndicator(Point (581, 460), Point(600, 479));
+    //Rect currColorIndicator(Point (581, 460), Point(600, 479));
+    Rect currColorIndicator(Point (620, 1), Point(640, 20));
     //PLACE RECTANGLES ON CONTROL MAT
+    rectangle(controls, currColorIndicator, getColorFromTuple(colors[currColor]), -1);
     rectangle(controls, clearControl, Scalar(255,255,255), -1);
     rectangle(controls, blueControl, Scalar(255,0,0), -1);
     rectangle(controls, greenControl, Scalar(0,255,0), -1);
@@ -100,7 +138,14 @@ int main(int argc, char** argv ) {
     putText(controls, "RED", Point(420, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1.5, LINE_AA);
     putText(controls, "YELLOW", Point(520, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(150,150,150), 1.5, LINE_AA);
 
-    rectangle(controls, currColorIndicator, getColorFromTuple(colors[currColor]), -1);
+    //CREATE RECTANGLES FOR LINE THICKNESS OPTIONS
+    Rect _2thick(Point(600,65), Point(640, 129));
+    Rect _4thick(Point(600,149), Point(640, 213));
+    Rect _6thick(Point(600,233), Point(640,297));
+    Rect _8thick(Point(600,317), Point(640,381));
+    Rect _10thick(Point(600, 401), Point(640, 465));
+    updateThickBoxes(canvas, _2thick, _4thick, _6thick, _8thick, _10thick, currThick);
+
     cout << "video size is " << video.size() << '\n';
     Mat hsv;
     int x1 = 0, y1 = 0; //cordinates
@@ -112,6 +157,7 @@ int main(int argc, char** argv ) {
         flip(video, video, +1);
         cvtColor(video, hsv, COLOR_BGR2HSV);
         rectangle(controls, currColorIndicator, getColorFromTuple(colors[currColor]), -1); //show current color in lower corner
+        updateThickBoxes(canvas, _2thick, _4thick, _6thick, _8thick, _10thick, currThick);
 
         //MORPHING TECHNIQUES
         Mat kernal = Mat(5, 5, CV_8U, Scalar(1,1,1));
@@ -131,23 +177,38 @@ int main(int argc, char** argv ) {
             if (x1 == 0 && y1 == 0) {
                 x1, y1 = boundBox.x, boundBox.y;
             }            
-            else if ((blueControl & boundBox).area()> 0) {
+            else if ((blueControl & boundBox).area()> 0) { //switch color to blue
                 currColor = 0;
             }
-            else if ((greenControl & boundBox).area()>0) {
+            else if ((greenControl & boundBox).area()>0) { //switch color to green
                 currColor = 1;
             }
-            else if ((redControl & boundBox).area()>0) {
+            else if ((redControl & boundBox).area()>0) { //switch color to red
                 currColor = 2;
             }
-            else if ((yellowControl & boundBox).area()>0) {
+            else if ((yellowControl & boundBox).area()>0) { //switch color to yellow
                 currColor = 3;
             }
-            else if ((clearControl & boundBox).area()>0) {
+            else if ((clearControl & boundBox).area()>0) { //clear canvas
                 canvas = Scalar(0,0,0);
             }
+            else if ((_2thick & boundBox).area()>0) { //switch thickness to 2
+                currThick = 2;
+            }
+            else if ((_4thick & boundBox).area()>0) { //switch thickness to 4
+                currThick = 4;
+            }
+            else if ((_6thick & boundBox).area()>0) { //switch thickness to 6
+                currThick = 6;
+            }
+            else if ((_8thick & boundBox).area()>0) { //switch thickness to 8
+                currThick = 8;
+            }
+            else if ((_10thick & boundBox).area()>0) { //switch thickness to 10
+                currThick = 10;
+            }
             else {
-                line(canvas, Point(x1, y1), Point(boundBox.x, boundBox.y), getColorFromTuple(colors[currColor]), 4);
+                line(canvas, Point(x1, y1), Point(boundBox.x, boundBox.y), getColorFromTuple(colors[currColor]), currThick);
             }
             x1 = boundBox.x;
             y1 = boundBox.y;
