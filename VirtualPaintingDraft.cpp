@@ -6,8 +6,6 @@
 #include <stdlib.h>
 #include <tuple>
 
-//https://medium.com/programming-fever/draw-using-a-virtual-pen-on-a-computer-screen-using-opencv-in-python-71d3a1d5902b
-
 using namespace cv;
 using namespace std;
 
@@ -73,23 +71,9 @@ int main(int argc, char** argv ) {
 
     VideoCapture cap;
     if (!cap.open(-1)) {
-    //if(!cap.open(-1)) {
     return 0;
-    //}
     }
 
-    //DEQUEUE FUNCTION
-    //isn't used right now
-    // deque<int> bpoints;
-    // bpoints.max_size();
-    // deque<int> gpoints;
-    // gpoints.max_size();
-    // deque<int> rpoints;
-    // rpoints.max_size();
-    // deque<int> ypoints;
-    // ypoints.max_size();
-    // int bindex=0, gindex=0, rindex=0, yindex=0, colorIndex = 0; 
-  
     //Colors are BGR
     //order of colors in vector: blue, green, red, yellow
     tuple <int, int, int> blue;
@@ -112,6 +96,7 @@ int main(int argc, char** argv ) {
     Mat video;
     Mat canvas;
     cap >> video;
+    
     //make all mats the same size
     if(video.empty()) video = Mat::zeros(video.size(), video.type());
     if(controls.empty()) controls = Mat::zeros(video.size(), video.type());
@@ -123,9 +108,9 @@ int main(int argc, char** argv ) {
     Rect greenControl( Point(275,1), Point(370,65));
     Rect redControl(Point(390,1), Point(485,65));
     Rect yellowControl(Point(505,1), Point(600,65));
-    //Rect currColorIndicator(Point (581, 460), Point(600, 479));
     Rect currColorIndicator(Point (620, 1), Point(640, 20));
-    //PLACE RECTANGLES ON CONTROL MAT
+
+    //PLACE COLOR RECTANGLES ON CONTROL MAT
     rectangle(controls, currColorIndicator, getColorFromTuple(colors[currColor]), -1);
     rectangle(controls, clearControl, Scalar(255,255,255), -1);
     rectangle(controls, blueControl, Scalar(255,0,0), -1);
@@ -138,7 +123,7 @@ int main(int argc, char** argv ) {
     putText(controls, "RED", Point(420, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1.5, LINE_AA);
     putText(controls, "YELLOW", Point(520, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(150,150,150), 1.5, LINE_AA);
 
-    //CREATE RECTANGLES FOR LINE THICKNESS OPTIONS
+    //CREATE AND PLACE LINE THICKNESS RECTANGLES ON CONTROL MAT
     Rect _2thick(Point(600,65), Point(640, 129));
     Rect _4thick(Point(600,149), Point(640, 213));
     Rect _6thick(Point(600,233), Point(640,297));
@@ -146,7 +131,6 @@ int main(int argc, char** argv ) {
     Rect _10thick(Point(600, 401), Point(640, 465));
     updateThickBoxes(canvas, _2thick, _4thick, _6thick, _8thick, _10thick, currThick);
 
-    cout << "video size is " << video.size() << '\n';
     Mat hsv;
     int x1 = 0, y1 = 0; //cordinates
     Rect boundBox; //bounding box for target
