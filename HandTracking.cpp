@@ -2,8 +2,17 @@
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/features2d/features2d.hpp>
+#include <opencv2/opencv.hpp> //blur efekti için
+#include <opencv2/video/background_segm.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/video/background_segm.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 using namespace cv;
+using namespace std;
 
 // hand_hist = None
 // traverse_point = []
@@ -23,11 +32,15 @@ using namespace cv;
 // }
 
 
-int contours(Mat hist_mask_image){
-    gray_hist_mask_image = cv::cvtColor(hist_mask_image, cv2.COLOR_BGR2GRAY)
-    ret, thresh = cv2.threshold(gray_hist_mask_image, 0, 255, 0)
-    _, cont, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    return cont
+vector<vector<Point>>  contours(Mat hist_mask_mat){
+    Mat gray_hist_mask_mat;
+    Mat threshold_mat;
+    vector<vector<Point> > contours;
+    vector<Vec4i> hierarchy;
+    cvtColor(hist_mask_mat, gray_hist_mask_mat, COLOR_BGR2GRAY);
+    threshold( gray_hist_mask_mat, threshold_mat, 0, 255, 0);
+    findContours(threshold_mat, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE );
+    return contours;
 }
 
 def draw_rect(frame):
