@@ -105,21 +105,30 @@ Mat hand_histogram(Mat frame){
 }
 
 
-def hist_masking(frame, hist):
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+Mat hist_masking(Mat frame, Mat hist){
+    Mat hsv_mat;
+    Mat dst_mat;
+    Mat backproj;
 
-    dst = cv2.calcBackProject([hsv], [0, 1], hist, [0, 180, 0, 256], 1)
+    float h_range[] = { 0, 256 };
+    float s_range[] = { 0, 256 };
+    float v_range[] = { 0, 256 };
+    const float* ranges[] = { h_range, s_range, v_range };
+    int channels[] = { 0, 1 };
 
-    disc = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (31, 31))
-    cv2.filter2D(dst, -1, disc, dst)
+    cvtColor(frame, hsv_mat, COLOR_BGR2HSV);
 
-    ret, thresh = cv2.threshold(dst, 150, 255, cv2.THRESH_BINARY)
+    calcBackProject( &hsv_mat, 1, channels, hist, backproj, ranges, 1, true );
 
-    # thresh = cv2.dilate(thresh, None, iterations=5)
+    Mat disc = cv::getStructuringElement(MORPH_ELLIPSE, Size(31, 31));
+    filter2D(dst_mat, dst_mat, -1, disc);
 
-    thresh = cv2.merge((thresh, thresh, thresh))
+    Mat ret;
+    double thresh;
+    threshold(dst_mat, dst_mat, 150, 255, THRESH_BINARY);
 
-    return cv2.bitwise_and(frame, thresh)
+    // Mat thresh_mat;
+    // merge((thresh, 1, thresh_mat));
 
 struct MomentVals {
     int cx;
@@ -137,6 +146,34 @@ struct MomentVals {
 //         return cx, cy
 //     else:
 //         return None
+//     return bitwise_and(frame, thresh);
+// }
+
+Mat histAndBackProject(Mat frame){
+    Mat hsv;
+    Mat hist;
+    int h_bins = 30; int s_bins = 32;
+    int histSize[] = { h_bins, s_bins };
+
+    cvtColor(frame, hsv, COLOR_BGR2HSV);
+
+    float h_range[] = { 0, 180 };
+    float s_range[] = { 0, 256 };
+    const float* ranges[] = { h_range, s_range };
+
+    int channels[] = { 0, 1 };
+
+    /// Get the Histogram and normalize it
+    calcHist( &hsv, 1, channels, Mat(), hist, 2, histSize, ranges, true, false );
+
+    normalize( hist, hist, 0, 255, NORM_MINMAX, -1, Mat() );
+
+    /// Get Backprojection
+    Mat backproj;
+    calcBackProject( &hsv, 1, channels, hist, backproj, ranges, 1, true );
+
+    return backproj;
+}
 
 
 
