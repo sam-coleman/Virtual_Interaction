@@ -87,7 +87,15 @@ Mat hand_histogram(Mat frame){
     calcHist( &hsv_planes[1], 1, 0, Mat(), s_hist, 1, &histSize, &histRange, uniform, accumulate );
     calcHist( &hsv_planes[2], 1, 0, Mat(), v_hist, 1, &histSize, &histRange, uniform, accumulate );
 
-    return cv2.normalize(hand_hist, hand_hist, 0, 255, cv2.NORM_MINMAX)
+    int hist_width = 90, hist_height = 10;
+    int bin_width = cvRound( (double) hist_width/histSize );
+    Mat histImage( hist_height, hist_width, CV_8UC3, Scalar( 0,0,0) );
+
+    normalize(h_hist, h_hist, 0, histImage.rows, NORM_MINMAX, -1, Mat() );
+    normalize(s_hist, s_hist, 0, histImage.rows, NORM_MINMAX, -1, Mat() );
+    normalize(v_hist, v_hist, 0, histImage.rows, NORM_MINMAX, -1, Mat() );
+
+    return histImage;
 }
 
 
