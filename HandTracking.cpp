@@ -130,6 +130,9 @@ Mat hist_masking(Mat frame, Mat hist){
     // Mat thresh_mat;
     // merge((thresh, 1, thresh_mat));
 
+    return bitwise_and(frame, thresh);
+}
+
 struct MomentVals {
     int cx;
     int cy;
@@ -146,8 +149,7 @@ struct MomentVals {
 //         return cx, cy
 //     else:
 //         return None
-//     return bitwise_and(frame, thresh);
-// }
+
 
 Mat histAndBackProject(Mat frame){
     Mat hsv;
