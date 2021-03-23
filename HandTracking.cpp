@@ -14,14 +14,17 @@
 using namespace cv;
 using namespace std;
 
+//DEFINE GLOBAL VARIABLES  
+
 // hand_hist = None
 // traverse_point = []
 int total_rectangle = 9;
-Rect hand_rect_one_x;
-Rect hand_rect_one_y;
+//if mad, switch to uint32
+vector <int> hand_rect_one_x;
+vector <int> hand_rect_one_y;
 
-// hand_rect_two_x = None
-// hand_rect_two_y = None
+vector <int> hand_rect_two_x;
+vector <int> hand_rect_two_y;
 
 //THIS IS USED OTHER PLACES BUT DOESNT NEED TO BE
 // Mat rescale_frame(Mat frame, int wpercent=130, int hpercent=130){
@@ -43,45 +46,28 @@ vector<vector<Point>> contours(Mat hist_mask_mat){
     return contours;
 }
 
-def draw_rect(frame):
-    rows, cols, _ = frame.shape
-    global total_rectangle, hand_rect_one_x, hand_rect_one_y, hand_rect_two_x, hand_rect_two_y
+Mat draw_rect(Mat frame){
+    Size sz = frame.size();
+    int rows = sz.height;
+    int cols = sz.width;
 
-    hand_rect_one_x = np.array(
-        [6 * rows / 20, 6 * rows / 20, 6 * rows / 20, 9 * rows / 20, 9 * rows / 20, 9 * rows / 20, 12 * rows / 20,
-         12 * rows / 20, 12 * rows / 20], dtype=np.uint32)
+    //global total_rectangle, hand_rect_one_x, hand_rect_one_y, hand_rect_two_x, hand_rect_two_y
 
-    hand_rect_one_y = np.array(
-        [9 * cols / 20, 10 * cols / 20, 11 * cols / 20, 9 * cols / 20, 10 * cols / 20, 11 * cols / 20, 9 * cols / 20,
-         10 * cols / 20, 11 * cols / 20], dtype=np.uint32)
+    hand_rect_one_x.insert(hand_rect_one_x.end(), {6 * rows / 20, 6 * rows / 20, 6 * rows / 20, 9 * rows / 20, 9 * rows / 20, 9 * rows / 20, 12 * rows / 20,
+         12 * rows / 20, 12 * rows / 20});
 
-    hand_rect_two_x = hand_rect_one_x + 10
-    hand_rect_two_y = hand_rect_one_y + 10
+    hand_rect_one_y.insert(hand_rect_one_y.end(), {9 * cols / 20, 10 * cols / 20, 11 * cols / 20, 9 * cols / 20, 10 * cols / 20, 11 * cols / 20, 9 * cols / 20,
+         10 * cols / 20, 11 * cols / 20});
 
-    for i in range(total_rectangle):
-        cv2.rectangle(frame, (hand_rect_one_y[i], hand_rect_one_x[i]),
-                      (hand_rect_two_y[i], hand_rect_two_x[i]),
-                      (0, 255, 0), 1)
+    hand_rect_two_x = hand_rect_one_x + 10;
+    hand_rect_two_y = hand_rect_one_y + 10;
+
+    for (int i = 0; i < total_rectangle; i++) {
+        rectangle(frame, Point(hand_rect_one_y.at(i), hand_rect_one_y.at(i)), Point(hand_rect_two_y[i], hand_rect_two_x[i]), (0,255,0),1);
+    }
 
     return frame
-
-//https://docs.opencv.org/3.4/d8/dbc/tutorial_histogram_calculation.html
-Mat hand_histogram(Mat frame){
-    Mat hand_hsv;
-    int histSize = 256;
-    float range[] = { 0, 256 }; //the upper boundary is exclusive
-    const float* histRange = { range };
-    vector<Mat> hsv_planes;
-    split(hand_hsv, hsv_planes );
-    bool uniform = true, accumulate = false;
-    Mat h_hist, s_hist, v_hist;
-    cvtColor(frame, hand_hsv, COLOR_BGR2HSV);
-    //this is 90 by ten because there are 9, 10x10 rectangles combined
-    Rect roi(0, 0, 90, 10); 
-
-    calcHist( &hsv_planes[0], 1, 0, Mat(), h_hist, 1, &histSize, &histRange, uniform, accumulate );
-    calcHist( &hsv_planes[1], 1, 0, Mat(), s_hist, 1, &histSize, &histRange, uniform, accumulate );
-    calcHist( &hsv_planes[2], 1, 0, Mat(), v_hist, 1, &histSize, &histRange, uniform, accumulate );
+}
 
     return cv2.normalize(hand_hist, hand_hist, 0, 255, cv2.NORM_MINMAX)
 }
