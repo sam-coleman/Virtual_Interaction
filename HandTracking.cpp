@@ -121,15 +121,23 @@ def hist_masking(frame, hist):
 
     return cv2.bitwise_and(frame, thresh)
 
+struct MomentVals {
+    int cx;
+    int cy;
+}
 
-def centroid(max_contour):
-    moment = cv2.moments(max_contour)
-    if moment['m00'] != 0:
-        cx = int(moment['m10'] / moment['m00'])
-        cy = int(moment['m01'] / moment['m00'])
-        return cx, cy
-    else:
-        return None
+// MomentVals centroid(vector<Point> max_contour) {
+    
+// }
+// def centroid(max_contour):
+//     moment = cv2.moments(max_contour)
+//     if moment['m00'] != 0:
+//         cx = int(moment['m10'] / moment['m00'])
+//         cy = int(moment['m01'] / moment['m00'])
+//         return cx, cy
+//     else:
+//         return None
+
 
 
 def farthest_point(defects, contour, centroid):
