@@ -69,6 +69,24 @@ Mat draw_rect(Mat frame){
     return frame
 }
 
+//https://docs.opencv.org/3.4/d8/dbc/tutorial_histogram_calculation.html
+Mat hand_histogram(Mat frame){
+    Mat hand_hsv;
+    int histSize = 256;
+    float range[] = { 0, 256 }; //the upper boundary is exclusive
+    const float* histRange = { range };
+    vector<Mat> hsv_planes;
+    split(hand_hsv, hsv_planes );
+    bool uniform = true, accumulate = false;
+    Mat h_hist, s_hist, v_hist;
+    cvtColor(frame, hand_hsv, COLOR_BGR2HSV);
+    //this is 90 by ten because there are 9, 10x10 rectangles combined
+    Rect roi(0, 0, 90, 10); 
+
+    calcHist( &hsv_planes[0], 1, 0, Mat(), h_hist, 1, &histSize, &histRange, uniform, accumulate );
+    calcHist( &hsv_planes[1], 1, 0, Mat(), s_hist, 1, &histSize, &histRange, uniform, accumulate );
+    calcHist( &hsv_planes[2], 1, 0, Mat(), v_hist, 1, &histSize, &histRange, uniform, accumulate );
+
     return cv2.normalize(hand_hist, hand_hist, 0, 255, cv2.NORM_MINMAX)
 }
 
