@@ -16,9 +16,9 @@ using namespace std;
 
 // hand_hist = None
 // traverse_point = []
-// total_rectangle = 9
-// hand_rect_one_x = None
-// hand_rect_one_y = None
+int total_rectangle = 9;
+Rect hand_rect_one_x;
+Rect hand_rect_one_y;
 
 // hand_rect_two_x = None
 // hand_rect_two_y = None
@@ -32,7 +32,7 @@ using namespace std;
 // }
 
 
-vector<vector<Point>>  contours(Mat hist_mask_mat){
+vector<vector<Point>> contours(Mat hist_mask_mat){
     Mat gray_hist_mask_mat;
     Mat threshold_mat;
     vector<vector<Point> > contours;
@@ -65,19 +65,26 @@ def draw_rect(frame):
 
     return frame
 
+//https://docs.opencv.org/3.4/d8/dbc/tutorial_histogram_calculation.html
+Mat hand_histogram(Mat frame){
+    Mat hand_hsv;
+    int histSize = 256;
+    float range[] = { 0, 256 }; //the upper boundary is exclusive
+    const float* histRange = { range };
+    vector<Mat> hsv_planes;
+    split(hand_hsv, hsv_planes );
+    bool uniform = true, accumulate = false;
+    Mat h_hist, s_hist, v_hist;
+    cvtColor(frame, hand_hsv, COLOR_BGR2HSV);
+    //this is 90 by ten because there are 9, 10x10 rectangles combined
+    Rect roi(0, 0, 90, 10); 
 
-def hand_histogram(frame):
-    global hand_rect_one_x, hand_rect_one_y
+    calcHist( &hsv_planes[0], 1, 0, Mat(), h_hist, 1, &histSize, &histRange, uniform, accumulate );
+    calcHist( &hsv_planes[1], 1, 0, Mat(), s_hist, 1, &histSize, &histRange, uniform, accumulate );
+    calcHist( &hsv_planes[2], 1, 0, Mat(), v_hist, 1, &histSize, &histRange, uniform, accumulate );
 
-    hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    roi = np.zeros([90, 10, 3], dtype=hsv_frame.dtype)
-
-    for i in range(total_rectangle):
-        roi[i * 10: i * 10 + 10, 0: 10] = hsv_frame[hand_rect_one_x[i]:hand_rect_one_x[i] + 10,
-                                          hand_rect_one_y[i]:hand_rect_one_y[i] + 10]
-
-    hand_hist = cv2.calcHist([roi], [0, 1], None, [180, 256], [0, 180, 0, 256])
     return cv2.normalize(hand_hist, hand_hist, 0, 255, cv2.NORM_MINMAX)
+}
 
 
 def hist_masking(frame, hist):
