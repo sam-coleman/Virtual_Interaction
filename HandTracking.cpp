@@ -59,14 +59,20 @@ Mat draw_rect(Mat frame){
     hand_rect_one_y.insert(hand_rect_one_y.end(), {9 * cols / 20, 10 * cols / 20, 11 * cols / 20, 9 * cols / 20, 10 * cols / 20, 11 * cols / 20, 9 * cols / 20,
          10 * cols / 20, 11 * cols / 20});
 
-    hand_rect_two_x = hand_rect_one_x + 10;
-    hand_rect_two_y = hand_rect_one_y + 10;
+    hand_rect_two_x.insert(hand_rect_two_x.end(), {6 * rows / 20 + 10, 6 * rows / 20 + 10, 6 * rows / 20 + 10, 9 * rows / 20 + 10, 9 * rows / 20 + 10, 9 * rows / 20 + 10, 12 * rows / 20 + 10,
+         12 * rows / 20 + 10, 12 * rows / 20 + 10});
+
+    hand_rect_two_y.insert(hand_rect_two_y.end(), {9 * cols / 20 + 10, 10 * cols / 20 + 10, 11 * cols / 20 + 10, 9 * cols / 20 + 10, 10 * cols / 20 + 10, 11 * cols / 20 + 10, 9 * cols / 20 + 10,
+         10 * cols / 20 + 10, 11 * cols / 20 + 10});
+
+    // hand_rect_two_x = hand_rect_one_x + 10;
+    // hand_rect_two_y = hand_rect_one_y + 10;
 
     for (int i = 0; i < total_rectangle; i++) {
         rectangle(frame, Point(hand_rect_one_y.at(i), hand_rect_one_y.at(i)), Point(hand_rect_two_y[i], hand_rect_two_x[i]), (0,255,0),1);
     }
 
-    return frame
+    return frame;
 }
 
 //https://docs.opencv.org/3.4/d8/dbc/tutorial_histogram_calculation.html
