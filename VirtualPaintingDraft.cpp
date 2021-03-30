@@ -130,7 +130,7 @@ int main(int argc, char** argv ) {
     Rect _6thick(Point(920,300), Point(960,370));
     Rect _8thick(Point(920,410), Point(960,480));
     Rect _10thick(Point(920, 520), Point(960, 590));
-    updateThickBoxes(canvas, _2thick, _4thick, _6thick, _8thick, _10thick, currThick); //create rectangles first time
+    updateThickBoxes(controls, _2thick, _4thick, _6thick, _8thick, _10thick, currThick); //create rectangles first time
 
     Mat hsv;
     int x1 = 0, y1 = 0; //cordinates
@@ -143,7 +143,7 @@ int main(int argc, char** argv ) {
         flip(video, video, +1); //mirror
         cvtColor(video, hsv, COLOR_BGR2HSV);
         rectangle(controls, currColorIndicator, getColorFromTuple(colors[currColor]), -1); //show current color in lower corner
-        updateThickBoxes(canvas, _2thick, _4thick, _6thick, _8thick, _10thick, currThick);
+        updateThickBoxes(controls, _2thick, _4thick, _6thick, _8thick, _10thick, currThick);
 
         //MORPHING TECHNIQUES
         Mat kernal = Mat(5, 5, CV_8U, Scalar(1,1,1));
@@ -208,6 +208,10 @@ int main(int argc, char** argv ) {
         imshow("video in",  controls + video + canvas);
         imshow("canvas", controls + canvas);
         if (waitKey(10) == 27) break; //stop by ESC key
+
+        if (waitKey(10) == 115) { //save mat by hitting s key
+            imwrite("test.jpg", canvas);
+        }
     }
     return 0;
 }
