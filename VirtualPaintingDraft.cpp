@@ -38,11 +38,11 @@ void updateThickBoxes(Mat mat, Rect _2, Rect _4, Rect _6, Rect _8, Rect _10, int
     rectangle(mat, _6, Scalar(255,255,255), -1);
     rectangle(mat, _8, Scalar(255,255,255), -1);
     rectangle(mat, _10, Scalar(255,255,255), -1);
-    putText(mat, "2", Point(615, 97), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
-    putText(mat, "4", Point(615, 181), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
-    putText(mat, "6", Point(615, 265), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
-    putText(mat, "8", Point(615, 349), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
-    putText(mat, "10", Point(610, 433), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
+    putText(mat, "2", Point(940, 115), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
+    putText(mat, "4", Point(940, 225), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
+    putText(mat, "6", Point(940, 335), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
+    putText(mat, "8", Point(940, 445), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
+    putText(mat, "10", Point(920, 555), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
 
     if (currThick == 2){
         rectangle(mat, _2, Scalar(0,255,0), -1);
@@ -99,17 +99,17 @@ int main(int argc, char** argv ) {
     
     //make all mats the same size
     if(video.empty()) video = Mat::zeros(video.size(), video.type());
+    resize(video, video, Size(), 1.5, 1.5); //increase canvas size by 150% from camera default
     if(controls.empty()) controls = Mat::zeros(video.size(), video.type());
     if(canvas.empty()) canvas = Mat::zeros(video.size(), video.type());
-    
+    cout << "video size is " << video.size() << '\n';
     //CREATE RECTANGLES FOR COLOR OPTIONS
-    Rect clearControl(Point(40,1), Point(140,65));
-    Rect blueControl(Point(160,1), Point(255,65));
-    Rect greenControl( Point(275,1), Point(370,65));
-    Rect redControl(Point(390,1), Point(485,65));
-    Rect yellowControl(Point(505,1), Point(600,65));
-    Rect currColorIndicator(Point (620, 1), Point(640, 20));
-
+    Rect clearControl(Point(0,1), Point(100,65));
+    Rect blueControl(Point(200,1), Point(300,65));
+    Rect greenControl( Point(400,1), Point(500,65));
+    Rect redControl(Point(600,1), Point(700,65));
+    Rect yellowControl(Point(800,1), Point(900,65));
+    Rect currColorIndicator(Point (940, 1), Point(960, 20));
     //PLACE COLOR RECTANGLES ON CONTROL MAT
     rectangle(controls, currColorIndicator, getColorFromTuple(colors[currColor]), -1);
     rectangle(controls, clearControl, Scalar(255,255,255), -1);
@@ -117,19 +117,20 @@ int main(int argc, char** argv ) {
     rectangle(controls, greenControl, Scalar(0,255,0), -1);
     rectangle(controls, redControl, Scalar(0,0,255), -1);
     rectangle(controls, yellowControl, Scalar(0,255,255), -1);
-    putText(controls, "CLEAR ALL", Point(49, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
-    putText(controls, "BLUE", Point(183, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1.5, LINE_AA);
-    putText(controls, "GREEN", Point(298, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1.5, LINE_AA);
-    putText(controls, "RED", Point(420, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1.5, LINE_AA);
-    putText(controls, "YELLOW", Point(520, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(150,150,150), 1.5, LINE_AA);
+    //ADD LABELS FOR COLOR RECTANGLES
+    putText(controls, "CLEAR ALL", Point(10, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
+    putText(controls, "BLUE", Point(225, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1.5, LINE_AA);
+    putText(controls, "GREEN", Point(420, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1.5, LINE_AA);
+    putText(controls, "RED", Point(630, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(255,255,255), 1.5, LINE_AA);
+    putText(controls, "YELLOW", Point(820, 33), FONT_HERSHEY_SIMPLEX, .5, Scalar(150,150,150), 1.5, LINE_AA);
 
     //CREATE AND PLACE LINE THICKNESS RECTANGLES ON CONTROL MAT
-    Rect _2thick(Point(600,65), Point(640, 129));
-    Rect _4thick(Point(600,149), Point(640, 213));
-    Rect _6thick(Point(600,233), Point(640,297));
-    Rect _8thick(Point(600,317), Point(640,381));
-    Rect _10thick(Point(600, 401), Point(640, 465));
-    updateThickBoxes(canvas, _2thick, _4thick, _6thick, _8thick, _10thick, currThick);
+    Rect _2thick(Point(920,80), Point(960, 150));
+    Rect _4thick(Point(920,190), Point(960, 260));
+    Rect _6thick(Point(920,300), Point(960,370));
+    Rect _8thick(Point(920,410), Point(960,480));
+    Rect _10thick(Point(920, 520), Point(960, 590));
+    updateThickBoxes(canvas, _2thick, _4thick, _6thick, _8thick, _10thick, currThick); //create rectangles first time
 
     Mat hsv;
     int x1 = 0, y1 = 0; //cordinates
@@ -138,7 +139,8 @@ int main(int argc, char** argv ) {
 
     for(;;) {
         cap >> video;
-        flip(video, video, +1);
+        resize(video, video, Size(), 1.5,1.5); //increase canvas size by 150% from camera default
+        flip(video, video, +1); //mirror
         cvtColor(video, hsv, COLOR_BGR2HSV);
         rectangle(controls, currColorIndicator, getColorFromTuple(colors[currColor]), -1); //show current color in lower corner
         updateThickBoxes(canvas, _2thick, _4thick, _6thick, _8thick, _10thick, currThick);
