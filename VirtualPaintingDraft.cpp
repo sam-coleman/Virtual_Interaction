@@ -209,8 +209,15 @@ int main(int argc, char** argv ) {
         imshow("canvas", controls + canvas);
         if (waitKey(10) == 27) break; //stop by ESC key
 
-        if (waitKey(10) == 115) { //save mat by hitting s key
-            imwrite("test.jpg", canvas);
+        if (waitKey(10) == 115) { //save mat by hitting s 
+            //save location is in saved_outputs folder
+            cout << "Please enter the image name (including the .extension): ";
+            String file_name;
+            getline(cin, file_name);
+            stringstream file_path;
+            file_path << ".." << "/" << "saved_outputs" << "/" << file_name;
+            imwrite(file_path.str(), canvas);
+            cout << '\n';
         }
     }
     return 0;
