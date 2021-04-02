@@ -54,7 +54,7 @@ void updateThickBoxes(Mat mat, Rect _4, Rect _8, Rect _12, Rect _20, int currThi
     }
     else if (currThick == 12) {
         rectangle(mat, _12, Scalar(0,255,0), -1);
-        putText(mat, "8", Point(940, 430), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
+        putText(mat, "12", Point(940, 430), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
     }
     else if (currThick == 20) {
         rectangle(mat, _20, Scalar(0,255,0), -1);
