@@ -105,7 +105,6 @@ int main(int argc, char** argv ) {
     resize(video, video, Size(), 1.5, 1.5); //increase canvas size by 150% from camera default
     if(controls.empty()) controls = Mat::zeros(video.size(), video.type());
     if(canvas.empty()) canvas = Mat::zeros(video.size(), video.type());
-    cout << "video size is " << video.size() << '\n';
     
     //CREATE RECTANGLES FOR COLOR OPTIONS
     Rect clearControl(Point(0,0), Point(100,65));
@@ -218,9 +217,11 @@ int main(int argc, char** argv ) {
         imshow("video in",  controls + video + canvas);
         imshow("canvas", controls + canvas);
         
-        if (waitKey(10) == 27) break; //stop by ESC key
+        int key_pressed = waitKey(10); //wait to see if key pressed
 
-        if (waitKey(10) == 115) { //save mat by hitting s 
+        if (key_pressed == 27) break; //stop by ESC key
+
+        else if (key_pressed == 115) { //save mat by hitting s 
             //save location is in saved_outputs folder
             cout << "Please enter the image name (including the .extension): ";
             String file_name;
