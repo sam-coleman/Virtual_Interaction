@@ -82,11 +82,11 @@ int main(int argc, char** argv ) {
     Display* dpy = XOpenDisplay(0);
     int scr = XDefaultScreen(dpy);
     Window root_window = XRootWindow(dpy, scr);
+    // XEvent event;
 
     // Determine display dimensions
     int screen_height = DisplayHeight(dpy, scr);
     int screen_width  = DisplayWidth(dpy, scr);
-    std::cout << "Screen size : " << screen_width << "x" << screen_height << std::endl;
 
     // mouse coordinates
     int mouse_x;
@@ -142,6 +142,12 @@ int main(int argc, char** argv ) {
 
             // Move pointer to coords (mouse_x,mouse_y)
             XWarpPointer(dpy, None, root_window, 0, 0, 0, 0, mouse_x, mouse_y);
+
+            // memset(&event, 0x00, sizeof(event));
+
+            // event.type = ButtonPress;
+            // event.xbutton.button = button;
+            // XSendEvent(dpy, PointerWindow, True, ButtonPressMask, &event) == 0);
             XFlush(dpy);
         } 
         else {
