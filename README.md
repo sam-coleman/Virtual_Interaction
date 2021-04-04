@@ -1,6 +1,8 @@
 # SoftSys_Virtual_Interaction
 Software Systems Open CV HCI Project
 
+Identifies a red color target in webcam frame and uses that input to either paint or move a mouse.  
+
 ## Requirements: 
     - Opencv >= 3.0 
     - X11
