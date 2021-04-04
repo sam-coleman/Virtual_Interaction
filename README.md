@@ -29,7 +29,12 @@ cd build
 ./Painting
 ```
 
-Press the 's' key to save the image, and enter a file name in the command line.
+To change the the color target, add lower and upper bound HSV values when running the file
+```bash
+./Painting lower_H lower_S lower_V upper_H upper_S upper_V
+```
+
+Press the 's' key to save the image, and enter a file name including extension in the command line. The images will be saved in the folder saved_outputs.
 Press the 'esc' key to exit the painting canvas. 
 
 ### Mouse Movement
