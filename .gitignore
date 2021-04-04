@@ -3,4 +3,5 @@ hand/pose_iter_102000.caffemodel
 CMakeLists.txt
 hand tracking testing/hand/pose_iter_102000.caffemodel
 /.vscode
+getModels.sh
 mousetest
