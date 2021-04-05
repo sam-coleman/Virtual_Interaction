@@ -133,19 +133,13 @@ void InitControls(Mat mat, Rect clearControl, Rect whiteControl, Rect blueContro
 int main(int argc, char** argv ) {
 
     //Color target defaults to red unless user inputs lower and upper bounds
-    Scalar lower_bound = Scalar(125, 122, 99); //lower bound HSV of color target
-    Scalar upper_bound = Scalar(179, 255, 255); //upper bound HSV of color target
+    Scalar lowerBound = Scalar(125, 122, 99); //lower bound HSV of color target
+    Scalar upperBound = Scalar(179, 255, 255); //upper bound HSV of color target
 
-    //if user provides inputs, those become lower and upper bound
+    //if user provides inputs, update lower and upper bounds
     if (argc == 7) {
-        lower_bound = Scalar(atoi(argv[1]), atoi(argv[2]), atoi(argv[3]));
-        upper_bound = Scalar(atoi(argv[4]), atoi(argv[5]), atoi(argv[6]));
-    }
-
-    //start video capture
-    VideoCapture cap;
-    if (!cap.open(-1)) {
-    return 0;
+        lowerBound = Scalar(atoi(argv[1]), atoi(argv[2]), atoi(argv[3]));
+        upperBound = Scalar(atoi(argv[4]), atoi(argv[5]), atoi(argv[6]));
     }
 
     //define colors and put them in vector holding all colors
@@ -169,6 +163,12 @@ int main(int argc, char** argv ) {
     
     int currColor = 0, currThick = 4; //initialize color to white and thickness to 4
     
+    //start video capture
+    VideoCapture cap;
+    if (!cap.open(-1)) {
+    return 0;
+    }
+
     //create mats and make all the same size
     Mat controls;
     Mat video;
@@ -189,12 +189,12 @@ int main(int argc, char** argv ) {
     Rect currColorIndicator(Point (940,0), Point(960, 20));
     InitControls(controls, clearControl, whiteControl, blueControl, greenControl, redControl, yellowControl, currColorIndicator, colors);
  
-    //CREATE AND PLACE LINE THICKNESS RECTANGLES ON CONTROL MAT
+    //create rectangles for line thicknesses
     Rect _4thick(Point(920, 80), Point(960, 180));
     Rect _8thick(Point(920, 230), Point(960, 330));
     Rect _12thick(Point(920, 380), Point(960, 480));
     Rect _20thick(Point(920, 530), Point(960, 630));
-    updateThickBoxes(controls, _4thick, _8thick, _12thick, _20thick, currThick); //create rectangles first time
+    updateThickBoxes(controls, _4thick, _8thick, _12thick, _20thick, currThick);
 
     Mat hsv; //mat to convert to HSV values
     int x1 = 0, y1 = 0; //cordinates of target
@@ -214,7 +214,7 @@ int main(int argc, char** argv ) {
         //Perform morphing techniques
         Mat kernal = Mat(5, 5, CV_8U, Scalar(1,1,1));
         Mat mask;
-        inRange(hsv, lower_bound, upper_bound, mask);
+        inRange(hsv, lowerBound, upperBound, mask);
         erode(mask, mask, kernal);
         erode(mask, mask, kernal);
         morphologyEx(mask, mask, MORPH_OPEN, kernal);
@@ -269,18 +269,18 @@ int main(int argc, char** argv ) {
         imshow("video in",  controls + video + canvas); //overlay video feed, controls, and canvas
         imshow("canvas", controls + canvas); //overlay controls and canvas
         
-        int key_pressed = waitKey(10); //wait to see if key pressed
+        int keyPressed = waitKey(10); //wait to see if key pressed
 
-        if (key_pressed == 27) break; //stop by ESC key
+        if (keyPressed == 27) break; //stop by ESC key
 
-        else if (key_pressed == 115) { //save mat by hitting s 
-            //save location is in saved_outputs folder
+        else if (keyPressed == 115) { //save mat by hitting s 
+            //save image with name from user in saved_outputs folder
             cout << "Please enter the image name (including the .extension): ";
-            String file_name;
-            getline(cin, file_name);
-            stringstream file_path;
-            file_path << ".." << "/" << "saved_outputs" << "/" << file_name;
-            imwrite(file_path.str(), canvas);
+            String fileName;
+            getline(cin, fileName);
+            stringstream filePath;
+            filePath << ".." << "/" << "saved_outputs" << "/" << fileName;
+            imwrite(filePath.str(), canvas);
             cout << '\n';
         }
     }
