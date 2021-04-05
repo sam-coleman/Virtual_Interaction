@@ -12,6 +12,7 @@
 using namespace cv;
 using namespace std;
 
+
 int getMaxAreaContourId(vector <vector<Point>> contours) {
         //Soure: https://stackoverflow.com/questions/46187563/finding-largest-contours-c
         double maxArea = 0;
@@ -35,41 +36,6 @@ Scalar getColorFromTuple (tuple<int, int, int> color) {
     return Scalar(blue, green, red);
 }
 
-void updateThickBoxes(Mat mat, Rect _2, Rect _4, Rect _6, Rect _8, Rect _10, int currThick) {
-    rectangle(mat, _2, Scalar(255,255,225), -1);
-    rectangle(mat, _4, Scalar(255,255,255), -1);
-    rectangle(mat, _6, Scalar(255,255,255), -1);
-    rectangle(mat, _8, Scalar(255,255,255), -1);
-    rectangle(mat, _10, Scalar(255,255,255), -1);
-    putText(mat, "2", Point(940, 115), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
-    putText(mat, "4", Point(940, 225), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
-    putText(mat, "6", Point(940, 335), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
-    putText(mat, "8", Point(940, 445), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
-    putText(mat, "10", Point(920, 555), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
-
-    if (currThick == 2){
-        rectangle(mat, _2, Scalar(0,255,0), -1);
-        putText(mat, "2", Point(615, 97), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
-    }
-    else if (currThick == 4){
-        rectangle(mat, _4, Scalar(0,255,0), -1);
-        putText(mat, "4", Point(615, 181), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
-    }
-    else if (currThick == 6) {
-        rectangle(mat, _6, Scalar(0,255,0), -1);
-        putText(mat, "6", Point(615, 265), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
-    }
-    else if (currThick == 8) {
-        rectangle(mat, _8, Scalar(0,255,0), -1);
-        putText(mat, "8", Point(615, 349), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);
-    }
-    else if (currThick == 10) {
-        rectangle(mat, _10, Scalar(0,255,0), -1);
-        putText(mat, "10", Point(610, 433), FONT_HERSHEY_SIMPLEX, .5, Scalar(0,0,0), 1.5, LINE_AA);          
-    }
-
-}
-
 int main(int argc, char** argv ) {
 
     VideoCapture cap;
@@ -79,18 +45,18 @@ int main(int argc, char** argv ) {
 
     //Setup mouse window
     // Find display
-    Display* dpy = XOpenDisplay(0);
-    int scr = XDefaultScreen(dpy);
-    Window root_window = XRootWindow(dpy, scr);
+    Display* display = XOpenDisplay(0);
+    int scr = XDefaultScreen(display);
+    Window rootWindow = XRootWindow(display, scr);
     // XEvent event;
 
     // Determine display dimensions
-    int screen_height = DisplayHeight(dpy, scr);
-    int screen_width  = DisplayWidth(dpy, scr);
+    int screenHeight = DisplayHeight(display, scr);
+    int screenWidth  = DisplayWidth(display, scr);
 
     // mouse coordinates
-    int mouse_x;
-    int mouse_y;
+    int mouseX;
+    int mouseY;
 
     Mat controls;
     Mat video;
@@ -98,8 +64,8 @@ int main(int argc, char** argv ) {
     cap >> video;
 
     //Find video size
-    int video_height = video.size[1];
-    int video_width = video.size[0];
+    int videoHeight = video.size[1];
+    int videoWidth = video.size[0];
     
     //make all mats the same size
     if(video.empty()) video = Mat::zeros(video.size(), video.type());
@@ -134,21 +100,17 @@ int main(int argc, char** argv ) {
             vector<Point> c = contours.at(getMaxAreaContourId(contours));
             boundBox = boundingRect(c);
 
+            // get contour coordinates
             x1 = boundBox.x;
             y1 = boundBox.y;
 
-            mouse_x = screen_width*x1/video_width;
-            mouse_y = screen_height*y1/video_height;
+            // scale mouse coordinates
+            mouseX = screenWidth*x1/videoWidth;
+            mouseY = screenHeight*y1/videoHeight;
 
-            // Move pointer to coords (mouse_x,mouse_y)
-            XWarpPointer(dpy, None, root_window, 0, 0, 0, 0, mouse_x, mouse_y);
-
-            // memset(&event, 0x00, sizeof(event));
-
-            // event.type = ButtonPress;
-            // event.xbutton.button = button;
-            // XSendEvent(dpy, PointerWindow, True, ButtonPressMask, &event) == 0);
-            XFlush(dpy);
+            // Move pointer to coords (mouseX,mouseY)
+            XWarpPointer(display, None, rootWindow, 0, 0, 0, 0, mouseX, mouseY);
+            XFlush(display);
         } 
         else {
             x1 = 0;
