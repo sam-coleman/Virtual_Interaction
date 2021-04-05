@@ -1,3 +1,11 @@
+/**
+ * Virtual Move Mouse
+ * A program that detects and tracks a color object to move your mouse
+ * 
+ * @author Sam Coleman
+ * @author Kate Mackowiak
+ */
+
 #include <stdio.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
@@ -12,7 +20,14 @@
 using namespace cv;
 using namespace std;
 
-
+/**
+* Determines the maximum contour from a vector of contours.
+*
+* Source: https://stackoverflow.com/questions/46187563/finding-largest-contours-c
+*
+* @param <contours> Vector containing all the contours from the color target.
+* @return The index of the maximum contour.
+*/
 int getMaxAreaContourId(vector <vector<Point>> contours) {
         //Soure: https://stackoverflow.com/questions/46187563/finding-largest-contours-c
         double maxArea = 0;
@@ -27,17 +42,10 @@ int getMaxAreaContourId(vector <vector<Point>> contours) {
     return maxAreaContourId;
 }
 
-Scalar getColorFromTuple (tuple<int, int, int> color) {
-    //take in tuple, return Scalar color
-    int blue, green, red;
-    blue = get<0>(color);
-    green = get<1>(color);
-    red = get<2>(color);
-    return Scalar(blue, green, red);
-}
 
 int main(int argc, char** argv ) {
 
+    //start video capture
     VideoCapture cap;
     if (!cap.open(-1)) {
     return 0;
@@ -58,21 +66,16 @@ int main(int argc, char** argv ) {
     int mouseX;
     int mouseY;
 
-    Mat controls;
     Mat video;
-    Mat canvas;
     cap >> video;
 
     //Find video size
     int videoHeight = video.size[1];
     int videoWidth = video.size[0];
     
-    //make all mats the same size
+    //Resize video mat
     if(video.empty()) video = Mat::zeros(video.size(), video.type());
     resize(video, video, Size(), 1.5, 1.5); //increase canvas size by 150% from camera default
-    if(controls.empty()) controls = Mat::zeros(video.size(), video.type());
-    if(canvas.empty()) canvas = Mat::zeros(video.size(), video.type());
-    cout << "video size is " << video.size() << '\n';
 
     Mat hsv;
     int x1 = 0, y1 = 0; //cordinates
@@ -80,6 +83,8 @@ int main(int argc, char** argv ) {
     int noiseThreshold = 500;
 
     for(;;) {
+
+        //update capture to video and perform basic operations
         cap >> video;
         resize(video, video, Size(), 1.5,1.5); //increase canvas size by 150% from camera default
         flip(video, video, +1); //mirror
@@ -117,21 +122,12 @@ int main(int argc, char** argv ) {
             y1 = 0;
         }
     
-        if (canvas.empty()) break; //end of video stream
-        imshow("video in",  controls + video + canvas);
-        imshow("canvas", controls + canvas);
-        if (waitKey(10) == 27) break; //stop by ESC key
+        if (video.empty()) break; //end of video stream
+        imshow("video in", video);
 
-        if (waitKey(10) == 115) { //save mat by hitting s 
-            //save location is in saved_outputs folder
-            cout << "Please enter the image name (including the .extension): ";
-            String file_name;
-            getline(cin, file_name);
-            stringstream file_path;
-            file_path << ".." << "/" << "saved_outputs" << "/" << file_name;
-            imwrite(file_path.str(), canvas);
-            cout << '\n';
-        }
+        int keyPressed = waitKey(10); //wait to see if key pressed
+
+        if (keyPressed == 27) break; //stop by ESC key
     }
     return 0;
 }
