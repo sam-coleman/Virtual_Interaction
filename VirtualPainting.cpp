@@ -1,3 +1,11 @@
+/**
+ * Virtual Painting 
+ * A program that detects and tracks a color object to paint on the display.
+ * 
+ * @author Sam Coleman
+ * @author Kate Mackowiak
+ */
+
 #include <stdio.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
@@ -224,46 +232,33 @@ int main(int argc, char** argv ) {
             //Perform operation depending on where target is: update color, thickness, clear, or draw line
             if (x1 == 0 && y1 == 0) {
                 x1, y1 = boundBox.x, boundBox.y;
-            } 
-            else if ((whiteControl & boundBox).area() > 0) { //switch color to white
+            } else if ((whiteControl & boundBox).area() > 0) { //switch color to white
                 currColor = 0;
-            }           
-            else if ((blueControl & boundBox).area()> 0) { //switch color to blue
+            } else if ((blueControl & boundBox).area()> 0) { //switch color to blue
                 currColor = 1;
-            }
-            else if ((greenControl & boundBox).area()>0) { //switch color to green
+            } else if ((greenControl & boundBox).area()>0) { //switch color to green
                 currColor = 2;
-            }
-            else if ((redControl & boundBox).area()>0) { //switch color to red
+            } else if ((redControl & boundBox).area()>0) { //switch color to red
                 currColor = 3;
-            }
-            else if ((yellowControl & boundBox).area()>0) { //switch color to yellow
+            } else if ((yellowControl & boundBox).area()>0) { //switch color to yellow
                 currColor = 4;
-            }
-            else if ((clearControl & boundBox).area()>0) { //clear canvas
+            } else if ((clearControl & boundBox).area()>0) { //clear canvas
                 canvas = Scalar(0,0,0);
-            }
-            else if ((_4thick & boundBox).area()>0) { //switch thickness to 4
+            } else if ((_4thick & boundBox).area()>0) { //switch thickness to 4
                 currThick = 4;
-            }
-            else if ((_8thick & boundBox).area()>0) { //switch thickness to 8
+            } else if ((_8thick & boundBox).area()>0) { //switch thickness to 8
                 currThick = 8;
-            }
-            else if ((_12thick & boundBox).area()>0) { //switch thickness to 12
+            } else if ((_12thick & boundBox).area()>0) { //switch thickness to 12
                 currThick = 12;
-            }
-            else if ((_20thick & boundBox).area()>0) { //switch thickness to 20
+            } else if ((_20thick & boundBox).area()>0) { //switch thickness to 20
                 currThick = 20;
-            }
-            else { //draw line
+            } else { //draw line
                 line(canvas, Point(x1, y1), Point(boundBox.x, boundBox.y), GetColorFromTuple(colors[currColor]), currThick);
             }
-
             //update current coordinates
             x1 = boundBox.x;
             y1 = boundBox.y;
-        } 
-        else { //reset coordinates if target not seen
+        } else { //reset coordinates if target not seen
             x1 = 0;
             y1 = 0;
         }
