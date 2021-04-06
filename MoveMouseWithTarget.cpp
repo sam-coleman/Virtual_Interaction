@@ -47,8 +47,8 @@ int main(int argc, char** argv ) {
     cap >> video;
 
     //Find video size
-    int videoHeight = video.size[1];
-    int videoWidth = video.size[0];
+    int videoHeight = video.size[0];
+    int videoWidth = video.size[1];
     
     //Resize video mat
     if(video.empty()) video = Mat::zeros(video.size(), video.type());
