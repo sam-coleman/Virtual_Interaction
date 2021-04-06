@@ -16,32 +16,9 @@
 #include <X11/Xlib.h>
 #include <iostream>
 #include <unistd.h>
-
+#include "include/shared.h"
 using namespace cv;
 using namespace std;
-
-/**
-* Determines the maximum contour from a vector of contours.
-*
-* Source: https://stackoverflow.com/questions/46187563/finding-largest-contours-c
-*
-* @param <contours> Vector containing all the contours from the color target.
-* @return The index of the maximum contour.
-*/
-int getMaxAreaContourId(vector <vector<Point>> contours) {
-        //Soure: https://stackoverflow.com/questions/46187563/finding-largest-contours-c
-        double maxArea = 0;
-        int maxAreaContourId = -1;
-        for (int j = 0; j < contours.size(); j++) {
-            double newArea = contourArea(contours.at(j));
-            if (newArea > maxArea) {
-                maxArea = newArea;
-                maxAreaContourId = j;
-            }
-        }
-    return maxAreaContourId;
-}
-
 
 int main(int argc, char** argv ) {
 
@@ -101,8 +78,8 @@ int main(int argc, char** argv ) {
         vector <vector<Point> > contours;
         findContours(mask, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
-        if (contours.size() >= 1 && contourArea(contours.at(getMaxAreaContourId(contours))) > noiseThreshold) {
-            vector<Point> c = contours.at(getMaxAreaContourId(contours));
+        if (contours.size() >= 1 && contourArea(contours.at(GetMaxAreaContourId(contours))) > noiseThreshold) {
+            vector<Point> c = contours.at(GetMaxAreaContourId(contours));
             boundBox = boundingRect(c);
 
             // get contour coordinates
