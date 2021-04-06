@@ -44,11 +44,15 @@ python3 determineColor.py
 
 ### Mouse Movement
 
-Run the Mouse file in the build directory and use a red color target to move the mouse around.
+Run the Mouse file in the build directory and use a red color target to move the mouse around. 
 
 ```bash
 cd build
 ./Mouse
+```
+To change the color target, add lower and upper bound HSV values when running the file
+```bash
+./Mouse lower_H lower_S lower_V upper_H upper_S upper_V
 ```
 
 Press the 'esc' key to exit the program. 
