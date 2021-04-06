@@ -27,13 +27,13 @@ Some of the next features we want to implement include:
 * Determine and implement a method to allow the user more choice over the colors they can use
 
 #### Current Draft Output Virtual Painting
-![Current Draft Output](/img/flower_draft.jpg)
+![Current Draft Output](/saved_outputs/flower_draft.jpg)
 
 ### Hand Tracking:
 With regards to hand tracking, we have attempted the implementation of four different methods. Our first implementation was using a neural net however the processing time was too slow for our use case. We need as close to real time feedback as possible and were getting about a frame per second, which is extremely limiting when you are trying to paint (with a one second delay). We then attempted implementing a few different algorithms which all worked pretty similarly - first identifying the users skin tone and then looking for a blob with that color and identifying it as a hand. These implementations also aim to identify the number of fingers the user has held up by counting the number of contours in the blob. We are currently attempting to convert a pointer finger tracker by [Amar Prakash Pandey](https://github.com/amarlearning/Finger-Detection-and-Tracking/blob/master/Finger%20Detection%20and%20Tracking/FingerDetection.py) from Python to C++. However, due to the drastic difference between python and C++ this is going slowly. One possible direction we can attempt is instead using a haar cascade to detect a hand in one unique position. While this would require the user to be at a specific angle to the camera and hold their hand in a specific way, it would simplify many of our problems separating the hand from the background.
 
 #### Test Implementation of Hand Tracking
-![Test Implementation of Hand Tracking](/img/handfailure.png)
+![Test Implementation of Hand Tracking](/saved_outputs/handfailure.png)
 
 ### Current Tasks
 1. Convert pointer finger tracking from Python to C++. Definition of done: all functions are converted and functionality deemed feasible or not. Sam and Kate
