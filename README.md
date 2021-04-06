@@ -55,4 +55,4 @@ Press the 'esc' key to exit the program.
 
 ## Contributors
 
-Written by [Sam Coleman](https://github.com/sam-coleman) and [Kate Mackowiak](https://github.com/kviiim) for Software Systems at Olin College of Engineering 
+Written by [Sam Coleman](https://github.com/sam-coleman) and [Kate Mackowiak](https://kviiim.github.io/) for Software Systems at Olin College of Engineering 
