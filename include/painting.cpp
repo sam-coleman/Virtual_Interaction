@@ -17,12 +17,12 @@
 using namespace cv;
 using namespace std;
 
-// /**
-// * Convert color represented as BGR tuple to a Scalar type.
-// *
-// * @param <color> Tuple representing a color of type BGR.
-// * @return Scalar representing the color.
-// */
+/**
+* Convert color represented as BGR tuple to a Scalar type.
+*
+* @param <color> Tuple representing a color of type BGR.
+* @return Scalar representing the color.
+*/
 Scalar GetColorFromTuple (tuple<int, int, int> color) {
     int blue, green, red;
     blue = get<0>(color);

@@ -22,6 +22,16 @@ using namespace std;
 
 int main(int argc, char** argv ) {
 
+    //Color target defaults to red unless user inputs lower and upper bounds
+    Scalar lowerBound = Scalar(125, 122, 99); //lower bound HSV of color target
+    Scalar upperBound = Scalar(179, 255, 255); //upper bound HSV of color target
+
+    //if user provides inputs, update lower and upper bounds
+    if (argc == 7) {
+        lowerBound = Scalar(atoi(argv[1]), atoi(argv[2]), atoi(argv[3]));
+        upperBound = Scalar(atoi(argv[4]), atoi(argv[5]), atoi(argv[6]));
+    }
+
     //start video capture
     VideoCapture cap;
     if (!cap.open(-1)) {
@@ -70,7 +80,7 @@ int main(int argc, char** argv ) {
         //MORPHING TECHNIQUES
         Mat kernal = Mat(5, 5, CV_8U, Scalar(1,1,1));
         Mat mask;
-        inRange(hsv, Scalar(130, 126, 75), Scalar(179, 255, 255), mask);
+        inRange(hsv, lowerBound, upperBound, mask);
         erode(mask, mask, kernal);
         erode(mask, mask, kernal);
         morphologyEx(mask, mask, MORPH_OPEN, kernal);

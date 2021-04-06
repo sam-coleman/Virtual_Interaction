@@ -153,7 +153,7 @@ int main(int argc, char** argv ) {
     
         if (canvas.empty()) break; //end of video stream
 
-        //show windoes
+        //show windows
         imshow("video in",  controls + video + canvas); //overlay video feed, controls, and canvas
         imshow("canvas", controls + canvas); //overlay controls and canvas
         
