@@ -1,5 +1,5 @@
-# SoftSys_Virtual_Interaction
-Software Systems Open CV HCI Project
+# Virtual Interaction
+Human Computer Interaction project utilizing OpenCV and C++  
 
 Identifies a color target in webcam frame and uses that input to either paint or move a mouse.  
 
