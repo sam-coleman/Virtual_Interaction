@@ -82,8 +82,13 @@ Scalar GetColorFromTuple (tuple<int, int, int> color) {
 ```
 #### Example Output Virtual Painting
 [Video of Virtual Painting in action!](saved_outputs/PaintingTest.mp4)  
-**TODO: INSERT PHOTOS OF OUTPUTS**  
-To view more sample outputs, see [saved_outputs](/saved_outputs).  
+Example of a flower we drew:
+![Flower](/saved_outputs/flower.jpg)
+
+Example showing all color options and line thicknesses
+![Squiggle](/saved_outputs/squiggle.jpg)
+
+To view more paintings we created, see [saved_outputs](/saved_outputs).  
 
 ### Mouse Movement:
 We were able to use the countour input from the color tracker to do minimal control of the mouse using [this resource](https://gist.github.com/aliva/3372331). Using the X11 library, we are able to move the user's mouse around the screen, regardless of what window is being used, however that is the limit of our functionality. We decided not to implement clicking or scrolling functionality due to difficulties with implementation as well as difficulty identifying what a "click" or "scroll" using a color target was.
